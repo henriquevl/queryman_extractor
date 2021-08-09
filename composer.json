@@ -1,0 +1,18 @@
+{
+    "name": "henriquevital/queryman_extractor",
+    "description": "Extrai imagens a partir de URLs de uma planilha excel ou csv (xls, xlsx, csv) e gera um arquivo compactado com o nome da planilha e data de extração (opcional)",
+    "authors": [
+        {
+            "name": "Henrique Vital Leme",
+            "email": "h.vitalweb@gmail.com"
+        }
+    ],
+    "require": {
+        "php": ">=7.3",
+        "monolog/monolog": "2.0.*",
+        "shuchkin/simplecsv": "^0.1.1",
+        "shuchkin/simplexls": "^0.9.10",
+        "shuchkin/simplexlsx": "^0.8.25",
+        "phpmailer/phpmailer": "^6.5"
+    }
+}
