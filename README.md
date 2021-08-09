@@ -10,4 +10,4 @@
 # Melhorias:
 
 - [x] Alterar nome dos arquivos de imagem
-- [] Adicionar retorno do processamento
+- [ ] Adicionar retorno do processamento
