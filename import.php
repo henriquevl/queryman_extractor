@@ -68,13 +68,9 @@ if($dir){
     }
 }
 
-function salvaImagem($tag,$url,$pasta){
-    
-    $nomeImagemArray = explode('/',explode('&',$url)[0]);
-    
-    $ultimoSegmento = count($nomeImagemArray) -1;
-    
-    $nomeImagem = $tag. ' - ' .$nomeImagemArray[$ultimoSegmento];
+function salvaImagem($tag,$id,$url,$pasta){
+
+    $nomeImagem = $tag. ' - ' .$id;
     
     $arquivoImagem = @file_get_contents($url);
 
@@ -193,18 +189,22 @@ switch ($arquivoTipo) {
         
 }
 
+echo 'Total de registros: ' . count($arquivoDados) . '<br>';
+$totalProcessados = 0;
 apagaArquvo($caminhoArquivoSalvo);
 
 $listaLinkFalha = [];
 
 foreach($arquivoDados as $linha){
     $linkImagem = $linha[2];
+    $id = $linha[0];
     $tag = str_replace('|','-',$linha[1]);
     
     if(substr($linkImagem,0,4) == 'http'){
-        if(salvaImagem($tag,$linkImagem,$caminhoUpload)){
+        if(salvaImagem($tag,$id,$linkImagem,$caminhoUpload)){
             $log->debug('Arquivo salvo com sucesso: ' . $linkImagem);
             sleep(1);
+            $totalProcessados++;
         }else{
             $log->error('Erro ao salvar arquivo: ' . $linkImagem);
             $listaLinkFalha[] = $linkImagem;
@@ -212,5 +212,7 @@ foreach($arquivoDados as $linha){
         }
     }
 }
+
+echo 'Total de registros processados: ' . $totalProcessados . '<br>';
 
 criaZip($caminhoUpload, $arquivoNome.' - '.date('Y-m-d') . '.zip');
