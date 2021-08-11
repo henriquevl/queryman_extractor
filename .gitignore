@@ -1,2 +1,4 @@
-/files/.*
+/files
 /vendor
+*.zip
+*.log
