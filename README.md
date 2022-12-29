@@ -1,3 +1,6 @@
+# Objetivo
+Ferramenta que lê uma planilha Excel com dados específicos e gera arquivos de imagem com um QR Code
+
 # Requisitos:
 
 - [x] Fazer upload de arquivo em Excel
@@ -11,3 +14,7 @@
 
 - [x] Alterar nome dos arquivos de imagem
 - [ ] Adicionar retorno do processamento
+
+# Bugs conhecidos:
+
+- O arquivo zip baixado no cliente está corrompido mas o arquivo gerado no servidor não está.
