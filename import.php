@@ -65,12 +65,15 @@ if($dir){
         $log->debug('Upload salvo com sucesso!');
         
         $log->debug('Arquivo salvo: ' . $caminhoArquivoSalvo);
+    }else{
+        $log->error('Erro ao mover upload: ' .$arquivo['name']["error"]);
     }
 }
 
+
 function salvaImagem($tag,$id,$url,$pasta){
 
-    $nomeImagem = $tag. ' - ' .$id;
+    $nomeImagem = $id;
     
     $arquivoImagem = @file_get_contents($url);
 
@@ -104,8 +107,6 @@ function getUrlContent($url,$pasta){
 
     print_r($data);
 
-    exit();
-
     file_put_contents($pasta.'/'.$nomeImagem . '.png',$data);
     $httpcode = curl_getinfo($ch, CURLINFO_HTTP_CODE);
     curl_close($ch);
@@ -115,7 +116,6 @@ function getUrlContent($url,$pasta){
 function apagaArquvo($arquivo){
     unlink($arquivo);
 }
-
 function selecionaIndiceLink($array){
     $indice = 0;
     foreach($array as $coluna){
@@ -127,7 +127,6 @@ function selecionaIndiceLink($array){
     }  
     
 }
-
 function criaZip($caminho, $arquivo){
     // Get real path for our folder
     $rootPath = realpath($caminho);
@@ -189,19 +188,55 @@ switch ($arquivoTipo) {
         
 }
 
-echo 'Total de registros: ' . count($arquivoDados) . '<br>';
+$totalRegistros = count($arquivoDados);
+
+$log->debug('Total de registros: ' . $totalRegistros);
+
 $totalProcessados = 0;
+
 apagaArquvo($caminhoArquivoSalvo);
 
 $listaLinkFalha = [];
 
 foreach($arquivoDados as $linha){
-    $linkImagem = $linha[2];
-    $id = $linha[0];
-    $tag = str_replace('|','-',$linha[1]);
+    $Dlinha = print_r($linha, true);
     
+    $log->debug($Dlinha);
+    $id = $linha[0];
+    $linkImagem = 'https://chart.apis.google.com/chart?cht=qr&chl=https://kmk.dimetrika.com/checklist/'.$id.'&chs=200x200';
+    $log->debug($linkImagem);
+    $tag = str_replace('|','-',$linha[1]);
+    $empresa = explode("\\",$linha[3])[0];
+    $local = $linha[2];
+    $log->debug($empresa);
+    
+    $caminhoUploadN = $caminhoUpload.$empresa.'/'.$local;
+
+    $log->debug($caminhoUploadN);
+
+    if(!is_dir($caminhoUploadN)){
+        
+        if(mkdir($caminhoUploadN, 0777, true)){
+            
+            $log->debug('pasta criada com sucesso!');
+            
+            $dir = true;
+            
+        }else{
+            
+            $log->error('Erro ao criar pasta!');
+            
+        }
+        
+    }else{
+        $log->debug('Pasta já existe.');
+        
+        $dir = true;
+        
+    }
+
     if(substr($linkImagem,0,4) == 'http'){
-        if(salvaImagem($tag,$id,$linkImagem,$caminhoUpload)){
+        if(salvaImagem($tag,$id,$linkImagem,$caminhoUploadN)){
             $log->debug('Arquivo salvo com sucesso: ' . $linkImagem);
             sleep(1);
             $totalProcessados++;
@@ -212,7 +247,7 @@ foreach($arquivoDados as $linha){
         }
     }
 }
-
+$log->debug('Total de registros processados: ' . $totalProcessados);
 echo 'Total de registros processados: ' . $totalProcessados . '<br>';
 
 criaZip($caminhoUpload, $arquivoNome.' - '.date('Y-m-d') . '.zip');
